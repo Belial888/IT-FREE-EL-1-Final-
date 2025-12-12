@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-4">
+    <h1 class="h2 mb-4" style="color: #1a1a1a; font-weight: 700;">
+        <i class="bi bi-clipboard-check me-2" style="color: #0d6efd;"></i>Incoming Aid Requests
+    </h1>
+
+    <!-- Filter Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label" for="status-filter">Filter by Status</label>
+                    <select name="status" id="status-filter" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="PENDING" {% if request.GET.status == 'PENDING' %}selected{% endif %}>Pending Review</option>
+                        <option value="APPROVED" {% if request.GET.status == 'APPROVED' %}selected{% endif %}>Approved</option>
+                        <option value="REJECTED" {% if request.GET.status == 'REJECTED' %}selected{% endif %}>Rejected</option>
+                        <option value="DISTRIBUTED" {% if request.GET.status == 'DISTRIBUTED' %}selected{% endif %}>Distributed</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label" for="search-input">Search</label>
+                    <input type="search" id="search-input" name="q" class="form-control" placeholder="Search resident name, item, or ID..." value="{{ request.GET.q }}">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-funnel me-2"></i>Filter Results
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Requests Table -->
+<div class="card">
+    <div class="card-body p-0">
+        {% if requests %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" role="table" aria-label="Aid requests for review">
+                    <thead>
+                        <tr>
+                            <th scope="col"><i class="bi bi-person"></i> Resident</th>
+                            <th scope="col"><i class="bi bi-box"></i> Item</th>
+                            <th scope="col" style="width: 80px;">Qty</th>
+                            <th scope="col" style="width: 140px;">Submitted</th>
+                            <th scope="col" style="width: 120px;">Status</th>
+                            <th scope="col" style="width: 80px;" aria-hidden="true">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in requests %}
+                        <tr>
+                            <td class="fw-500">{{ req.beneficiary.full_name }}</td>
+                            <td>{{ req.item_requested }}</td>
+                            <td>{{ req.quantity_requested }}</td>
+                            <td>{{ req.date_requested|date:"M d, Y" }}</td>
+                            <td>
+                                {% if req.status == 'APPROVED' %}
+                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Approved</span>
+                                {% elif req.status == 'PENDING' %}
+                                    <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Pending</span>
+                                {% elif req.status == 'REJECTED' %}
+                                    <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Rejected</span>
+                                {% elif req.status == 'DISTRIBUTED' %}
+                                    <span class="badge bg-info"><i class="bi bi-box2-heart me-1"></i>Distributed</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ req.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'request_update' req.pk %}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Review and update status">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state py-5">
+                <div class="empty-state-icon">
+                    <i class="bi bi-inbox"></i>
+                </div>
+                <h3>No Requests Found</h3>
+                <p class="text-muted mb-0">No aid requests match your current filters.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

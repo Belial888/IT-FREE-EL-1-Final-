@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card border-0">
+            <div class="card-header" style="background: linear-gradient(135deg, #0d6efd 0%, #0ea5a4 100%); border: none; padding: 32px 24px; text-align: center;">
+                <div style="width: 56px; height: 56px; margin: -40px auto 16px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.75rem;">
+                    <i class="bi bi-person" style="color: #0d6efd;"></i>
+                </div>
+                <h4 class="text-white mb-2" style="font-weight: 700;">My Profile</h4>
+                <p class="text-white-50 mb-0" style="font-size: 0.9rem;">Update your account information</p>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% include 'partials/form_fields.html' with submit_text='Save Profile' %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

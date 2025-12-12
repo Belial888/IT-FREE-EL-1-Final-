@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">About</li>
+  </ol>
+</nav>
+
+<div class="card">
+  <div class="card-body">
+    <div class="row gap-3 align-items-center">
+      <div class="col-md-8">
+        <h2 class="mb-2">About Barangay Relief System</h2>
+        <p class="lead text-muted">This system helps barangay staff manage aid requests and distributions, and allows residents to submit requests and view their status.</p>
+        <ul>
+          <li>Submit requests for aid</li>
+          <li>Staff can review, approve, and record distributions</li>
+          <li>Residents can view their request history and edit their profile</li>
+        </ul>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="p-3 bg-light rounded">
+          <i class="bi bi-people-fill" style="font-size:2.5rem;color:var(--accent)"></i>
+          <p class="mb-0 mt-2">Community-first</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-custom">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'request_list' %}">My Requests</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Request Details</li>
+    </ol>
+  </nav>
+</div>
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header" style="background: linear-gradient(135deg, #0d6efd 0%, #0ea5a4 100%); border: none; padding: 24px;">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="h3 text-white mb-2" style="margin: 0;">
+              <i class="bi bi-file-earmark-check me-2"></i>Request Details
+            </h1>
+            <p class="text-white-50 mb-0" style="font-size: 0.9rem;">{{ request_obj.date_requested|date:"M d, Y" }}</p>
+          </div>
+          <div>
+            {% if request_obj.status == 'APPROVED' %}
+              <span class="badge bg-success" style="font-size: 0.9rem; padding: 8px 12px;"><i class="bi bi-check-circle me-1"></i>Approved</span>
+            {% elif request_obj.status == 'PENDING' %}
+              <span class="badge bg-warning text-dark" style="font-size: 0.9rem; padding: 8px 12px;"><i class="bi bi-hourglass-split me-1"></i>Pending</span>
+            {% elif request_obj.status == 'REJECTED' %}
+              <span class="badge bg-danger" style="font-size: 0.9rem; padding: 8px 12px;"><i class="bi bi-x-circle me-1"></i>Rejected</span>
+            {% elif request_obj.status == 'DISTRIBUTED' %}
+              <span class="badge bg-info" style="font-size: 0.9rem; padding: 8px 12px;"><i class="bi bi-box2-heart me-1"></i>Distributed</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <h5 class="mb-4">Request Information</h5>
+        <dl class="row" role="list">
+          <dt class="col-sm-4 fw-600">Item Requested</dt>
+          <dd class="col-sm-8 mb-3">{{ request_obj.item_requested }}</dd>
+
+          <dt class="col-sm-4 fw-600">Quantity</dt>
+          <dd class="col-sm-8 mb-3">{{ request_obj.quantity_requested }} units</dd>
+
+          <dt class="col-sm-4 fw-600">Date Submitted</dt>
+          <dd class="col-sm-8 mb-3">{{ request_obj.date_requested|date:"M d, Y H:i" }}</dd>
+
+          <dt class="col-sm-4 fw-600">Status</dt>
+          <dd class="col-sm-8 mb-3">
+            <span class="badge {% if request_obj.status == 'APPROVED' %}bg-success{% elif request_obj.status == 'PENDING' %}bg-warning text-dark{% elif request_obj.status == 'DISTRIBUTED' %}bg-info{% else %}bg-secondary{% endif %}">
+              {{ request_obj.get_status_display }}
+            </span>
+          </dd>
+
+          <dt class="col-sm-4 fw-600">Beneficiary</dt>
+          <dd class="col-sm-8 mb-0">{{ request_obj.beneficiary.full_name }}</dd>
+        </dl>
+      </div>
+      <div class="card-footer bg-light">
+        <div class="d-flex gap-2">
+          <a href="{% url 'request_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Back to Requests
+          </a>
+          {% if user.is_staff %}
+            <a href="{% url 'request_update' request_obj.pk %}" class="btn btn-primary">
+              <i class="bi bi-pencil-square me-1"></i>Update Status
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <h6 class="mb-3">
+          <i class="bi bi-info-circle me-2" style="color: #0d6efd;"></i>
+          Status Guide
+        </h6>
+        <ul class="small text-muted ps-3 mb-0">
+          <li class="mb-2"><strong>Pending:</strong> Awaiting staff review</li>
+          <li class="mb-2"><strong>Approved:</strong> Ready for distribution</li>
+          <li class="mb-2"><strong>Rejected:</strong> Request not approved</li>
+          <li><strong>Distributed:</strong> Aid has been delivered</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

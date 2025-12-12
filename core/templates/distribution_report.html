@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-custom">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Distribution Report</li>
+    </ol>
+  </nav>
+
+  <h1 class="h2 mb-2" style="color: #1a1a1a; font-weight: 700;">
+    <i class="bi bi-graph-up me-2" style="color: #0d6efd;"></i>Distribution Report
+  </h1>
+  <p class="text-muted">Track all aid distributions to residents</p>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-4 mb-5">
+  {% for item in summary %}
+  <div class="col-md-6 col-lg-4">
+    <div class="stat-card">
+      <div class="stat-icon primary">
+        <i class="bi bi-box2-heart"></i>
+      </div>
+      <div class="stat-label">{{ item.item_name }}</div>
+      <div class="stat-value">{{ item.total_qty }}</div>
+      <p class="text-muted small mt-2 mb-0">units distributed</p>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12">
+    <div class="empty-state py-4">
+      <p class="text-muted mb-0">No items distributed yet.</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Transaction Log -->
+<div class="card">
+  <div class="card-header">
+    <i class="bi bi-list-check me-2" style="color: #0d6efd;"></i>
+    Transaction Log
+  </div>
+  <div class="card-body p-0">
+    {% if distributions %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" role="table" aria-label="Distribution transactions">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Recipient</th>
+              <th scope="col"><i class="bi bi-box"></i> Item</th>
+              <th scope="col" style="width: 100px;">Quantity</th>
+              <th scope="col">Staff</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for dist in distributions %}
+            <tr>
+              <td>{{ dist.date_given|date:"M d, Y" }}</td>
+              <td class="fw-500">{{ dist.recipient }}</td>
+              <td>{{ dist.item_name }}</td>
+              <td>
+                <span class="badge bg-info">{{ dist.qty }}</span>
+              </td>
+              <td>{{ dist.barangay_staff.username }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">
+              <div class="empty-state py-4">
+                <div class="empty-state-icon mb-3">
+                  <i class="bi bi-inbox"></i>
+                </div>
+                <p class="text-muted mb-0">No distribution transactions yet.</p>
+              </div>
+            </td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state py-5">
+        <div class="empty-state-icon">
+          <i class="bi bi-inbox"></i>
+        </div>
+        <h4>No Distributions Yet</h4>
+        <p class="text-muted mb-0">Start recording aid distributions to residents.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

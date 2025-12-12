@@ -1,0 +1,42 @@
+{% comment %} Renders a form with bootstrap-friendly markup. Expects `form` and optional `submit_text`. {% endcomment %}
+{% if form.non_field_errors %}
+    <div class="alert alert-danger alert-premium" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            <strong>Please fix the errors below:</strong>
+        </div>
+        <div class="mt-2 ms-4">{{ form.non_field_errors }}</div>
+    </div>
+{% endif %}
+{% for field in form %}
+    {% if field.field.widget.input_type != 'hidden' %}
+        <div class="form-group">
+            {% if field.label %}
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {% endif %}
+            <div style="position: relative;">
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-danger small mt-2">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        {{ field.errors|striptags }}
+                    </div>
+                {% endif %}
+            </div>
+            {% if field.help_text %}
+                <div class="form-text">
+                    <i class="bi bi-info-circle me-1" style="opacity: 0.6;"></i>
+                    {{ field.help_text|safe }}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endfor %}
+<div class="d-grid gap-2 mt-4">
+    <button type="submit" class="btn btn-primary btn-lg">
+        <i class="bi bi-check-circle me-2"></i>{{ submit_text|default:'Submit' }}
+    </button>
+    <a href="javascript:history.back()" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left me-2"></i>Cancel
+    </a>
+</div>

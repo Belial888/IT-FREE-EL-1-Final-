@@ -1,0 +1,331 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Welcome Section -->
+<div class="mb-5">
+    <div class="card overflow-hidden">
+        <div style="background: linear-gradient(135deg, #0d6efd 0%, #0ea5a4 100%); height: 180px;"></div>
+        <div class="card-body text-center" style="margin-top: -90px; position: relative; z-index: 1;">
+            <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 16px;">
+                <h1 class="h2 mb-2" style="color: #1a1a1a;">
+                    {% if user.is_authenticated %}
+                        Welcome back, <strong>{{ user.first_name|default:user.username }}</strong>!
+                    {% else %}
+                        Barangay Aid & Relief System
+                    {% endif %}
+                </h1>
+                <p class="text-muted mb-0">Serving our community with efficient relief and aid distribution</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if user.is_authenticated %}
+    {% if user.is_staff %}
+        <!-- Staff Dashboard -->
+        <div class="mb-4">
+            <h3 class="mb-4" style="color: #1a1a1a; font-weight: 700;">Dashboard Overview</h3>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="stat-icon primary">
+                        <i class="bi bi-file-text"></i>
+                    </div>
+                    <div class="stat-label">Total Requests</div>
+                    <div class="stat-value">{{ stats.total_requests }}</div>
+                    <p class="text-muted small mt-2 mb-0">All submitted requests</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="stat-icon warning">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                    <div class="stat-label">Pending Review</div>
+                    <div class="stat-value" style="color: #ffc107;">{{ stats.pending_requests }}</div>
+                    <p class="text-muted small mt-2 mb-0">Awaiting approval</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="stat-icon success">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="stat-label">Approved</div>
+                    <div class="stat-value" style="color: #198754;">{{ stats.approved_requests }}</div>
+                    <p class="text-muted small mt-2 mb-0">Ready for distribution</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card">
+                    <div class="stat-icon accent">
+                        <i class="bi bi-hand-thumbs-up"></i>
+                    </div>
+                    <div class="stat-label">Distributed</div>
+                    <div class="stat-value" style="color: #0ea5a4;">{{ stats.distributed }}</div>
+                    <p class="text-muted small mt-2 mb-0">Aid delivered</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Staff Actions -->
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center py-4">
+                        <div style="font-size: 2.5rem; margin-bottom: 12px;">
+                            <i class="bi bi-clipboard-check" style="color: #0d6efd;"></i>
+                        </div>
+                        <h5 class="card-title">Review Requests</h5>
+                        <p class="text-muted mb-3">Manage and approve aid requests from residents</p>
+                        <a href="{% url 'admin_request_list' %}" class="btn btn-primary">
+                            <i class="bi bi-arrow-right me-2"></i>Go to Requests
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center py-4">
+                        <div style="font-size: 2.5rem; margin-bottom: 12px;">
+                            <i class="bi bi-box2-heart" style="color: #0ea5a4;"></i>
+                        </div>
+                        <h5 class="card-title">Record Distribution</h5>
+                        <p class="text-muted mb-3">Log and track aid distributions to beneficiaries</p>
+                        <a href="{% url 'distribution_create' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>New Distribution
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center py-4">
+                        <div style="font-size: 2.5rem; margin-bottom: 12px;">
+                            <i class="bi bi-graph-up" style="color: #198754;"></i>
+                        </div>
+                        <h5 class="card-title">View Reports</h5>
+                        <p class="text-muted mb-3">Analyze distribution statistics and trends</p>
+                        <a href="{% url 'distribution_report' %}" class="btn btn-primary">
+                            <i class="bi bi-bar-chart me-2"></i>Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center py-4">
+                        <div style="font-size: 2.5rem; margin-bottom: 12px;">
+                            <i class="bi bi-people" style="color: #ffc107;"></i>
+                        </div>
+                        <h5 class="card-title">Profile</h5>
+                        <p class="text-muted mb-3">Manage your account information and preferences</p>
+                        <a href="{% url 'profile' %}" class="btn btn-primary">
+                            <i class="bi bi-person me-2"></i>My Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <!-- Resident Dashboard -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon primary">
+                        <i class="bi bi-file-earmark-check"></i>
+                    </div>
+                    <div class="stat-label">My Requests</div>
+                    <div class="stat-value">{{ stats.my_requests }}</div>
+                    <p class="text-muted small mt-2 mb-3">Total submitted</p>
+                    <p class="text-warning small mb-0">
+                        <i class="bi bi-hourglass-split me-1"></i>
+                        {{ stats.my_pending }} pending
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon success">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                    <div class="stat-label">Approved</div>
+                    <div class="stat-value" style="color: #198754;">{{ stats.approved_requests }}</div>
+                    <p class="text-muted small mt-2 mb-0">Ready for pickup</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon accent">
+                        <i class="bi bi-gift"></i>
+                    </div>
+                    <div class="stat-label">Received Aid</div>
+                    <div class="stat-value" style="color: #0ea5a4;">{{ stats.distributed }}</div>
+                    <p class="text-muted small mt-2 mb-0">Distributions received</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resident Actions -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-lightning-charge me-2" style="color: #0d6efd;"></i>
+                        Quick Actions
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-3">
+                            <a href="{% url 'request_create' %}" class="btn btn-success btn-lg">
+                                <i class="bi bi-plus-circle me-2"></i>Submit New Aid Request
+                            </a>
+                            <a href="{% url 'request_list' %}" class="btn btn-outline-primary btn-lg">
+                                <i class="bi bi-list-check me-2"></i>View My Requests
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-shield-lock me-2" style="color: #0d6efd;"></i>
+                        Account
+                    </div>
+                    <div class="card-body">
+                        <a href="{% url 'profile' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Information Cards -->
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title mb-3">
+                            <i class="bi bi-info-circle me-2" style="color: #0d6efd;"></i>
+                            How to Request Aid
+                        </h6>
+                        <ol class="small ps-3 mb-0 text-muted">
+                            <li>Click "Submit New Aid Request" above</li>
+                            <li>Fill in your request details</li>
+                            <li>Wait for review and approval</li>
+                            <li>Collect your aid when approved</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title mb-3">
+                            <i class="bi bi-question-circle me-2" style="color: #0d6efd;"></i>
+                            Need Help?
+                        </h6>
+                        <p class="small text-muted mb-2">Have questions about our aid program?</p>
+                        <a href="{% url 'help' %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-question-lg me-1"></i>View Help
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+
+{% else %}
+    <!-- Unauthenticated User -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body py-5">
+                    <div class="text-center mb-4">
+                        <div style="font-size: 3.5rem; color: #0d6efd; margin-bottom: 20px;">
+                            <i class="bi bi-heart-handshake"></i>
+                        </div>
+                        <h3 class="mb-3">Welcome to Our Aid System</h3>
+                        <p class="text-muted lead mb-4">We're here to help our community members get the support they need.</p>
+                    </div>
+                    <div class="d-grid gap-3 gap-md-0 d-md-flex justify-content-md-center">
+                        <a class="btn btn-primary btn-lg me-md-2" href="{% url 'login' %}">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                        </a>
+                        <a class="btn btn-success btn-lg" href="{% url 'register' %}">
+                            <i class="bi bi-person-plus me-2"></i>Create Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-lightbulb me-2" style="color: #0d6efd;"></i>
+                    Features
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Easy request submission</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Real-time status tracking</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Secure accounts</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Fast processing</li>
+                        <li><i class="bi bi-check-circle text-success me-2"></i>Community support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Information Sections -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title mb-3">
+                        <i class="bi bi-info-circle me-2" style="color: #0d6efd;"></i>
+                        About Our Program
+                    </h6>
+                    <p class="small text-muted mb-0">Our barangay aid system is designed to efficiently distribute relief and assistance to qualified residents. We believe in supporting our community members during times of need.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title mb-3">
+                        <i class="bi bi-question-circle me-2" style="color: #0d6efd;"></i>
+                        Getting Started
+                    </h6>
+                    <p class="small text-muted mb-2">To apply for aid:</p>
+                    <ol class="small ps-3 text-muted mb-0">
+                        <li>Register for an account</li>
+                        <li>Complete your profile</li>
+                        <li>Submit an aid request</li>
+                        <li>Track your application status</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endif %}
+{% endblock %}
