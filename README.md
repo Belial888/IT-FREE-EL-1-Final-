@@ -5,8 +5,7 @@ by Jabin Aldiano
 
 ## 1. Create Virtual Environment
 python -m venv venv
-venv\Scripts\activate  # Windows
-source venv/bin/activate  # Mac/Linux
+venv\Scripts\activate
 
 ## 2. Install dependencies
 pip install -r requirements.txt
